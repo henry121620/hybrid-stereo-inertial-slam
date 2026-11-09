@@ -1,0 +1,136 @@
+%YAML:1.0
+File.version: "1.0"
+Camera.type: "Rectified"
+
+# ============================================================
+# ZED2i 1280x720 Stereo + GX5 IMU settings
+# Image input suggestion:
+#   /zed2i/zed_node/left/image_rect_color
+# IMU input suggestion:
+#   /imu/data
+#
+# IMPORTANT:
+# - Do NOT manually rotate/transform the IMU topic before ORB-SLAM3.
+# - Feed the original GX5 /imu/data topic, then let ORB-SLAM3 use the extrinsic below.
+# ============================================================
+
+# ================== Left (live 1280x720, rectified) ==================
+Camera1.fx: 524.6032104492188
+Camera1.fy: 524.6032104492188
+Camera1.cx: 637.5706787109375
+Camera1.cy: 352.5220031738281
+
+# Rectified image -> no distortion
+Camera1.k1: 0.0
+Camera1.k2: 0.0
+Camera1.p1: 0.0
+Camera1.p2: 0.0
+Camera1.k3: 0.0
+
+# Some ORB-SLAM3 mono-inertial forks read Camera.* instead of Camera1.*
+Camera.fx: 524.6032104492188
+Camera.fy: 524.6032104492188
+Camera.cx: 637.5706787109375
+Camera.cy: 352.5220031738281
+Camera.k1: 0.0
+Camera.k2: 0.0
+Camera.p1: 0.0
+Camera.p2: 0.0
+Camera.k3: 0.0
+
+# ================== Right (live 1280x720, rectified) ==================
+Camera2.fx: 524.6032104492188
+Camera2.fy: 524.6032104492188
+Camera2.cx: 637.5706787109375
+Camera2.cy: 352.5220031738281
+Camera2.k1: 0.0
+Camera2.k2: 0.0
+Camera2.p1: 0.0
+Camera2.p2: 0.0
+Camera2.k3: 0.0
+
+# ================== Image geometry / rate ==================
+Camera.width: 1280
+Camera.height: 720
+Camera.fps: 15
+# bgr8 -> 0, rgb8 -> 1. ZED ROS image_rect_color is usually bgr8.
+Camera.RGB: 0
+
+# ================== Stereo model ==================
+# Input images are /zed2i/zed_node/*/image_rect_color/compressed, already rectified.
+# Use Rectified mode to avoid a second stereoRectify/remap pass.
+Stereo.ThDepth: 25.0
+Stereo.b: 0.11987655
+
+# Do not enable this in Rectified mode; it would trigger double rectification.
+# Stereo.T_c1_c2: !!opencv-matrix
+#   rows: 4
+#   cols: 4
+#   dt: f
+#   data: [1.0, 0.0, 0.0,  0.11987655,
+#          0.0, 1.0, 0.0, -0.000154237,
+#          0.0, 0.0, 1.0,  0.000412013,
+#          0.0, 0.0, 0.0,  1.0]
+
+# Compatibility for forks that only read bf. bf = fx_left * baseline.
+Camera.bf: 62.88803482055664
+ThDepth: 40.0
+
+# ================== ORB Extractor ==================
+ORBextractor.nFeatures: 2500
+ORBextractor.scaleFactor: 1.2
+ORBextractor.nLevels: 8
+ORBextractor.iniThFAST: 10
+ORBextractor.minThFAST: 5
+
+# ================== IMU ==================
+# Check actual rate with:
+#   rostopic hz /zed2i/zed_node/imu/data
+# Your bag was estimated around 200 Hz, so this is kept at 200.
+IMU.Frequency: 200.0
+
+# From kalibr_ws/config/gx5_imu.yaml.
+IMU.NoiseGyro: 9.024709086518676e-05
+IMU.NoiseAcc:  4.098959143299847e-04
+IMU.GyroWalk:  4.556136609883659e-06
+IMU.AccWalk:   3.258270902360064e-05
+
+# ================== GX5 IMU-Camera Extrinsic from Kalibr ==================
+# Source:
+#   kalibr_ws/zed2i_mono_imu_calib-camchain-imucam.yaml
+#   rostopic: /imu/data
+#   T_cam_imu = camera_left <- GX5 imu
+#
+# This ORB-SLAM3 key is body/imu <- camera_left, so use inverse(T_cam_imu).
+IMU.T_b_c1: !!opencv-matrix
+  rows: 4
+  cols: 4
+  dt: f
+  data: [-0.005764266094, -0.019287376442, -0.999797364643, -0.015705120367,
+          0.999980400028,  0.002332337460, -0.005810315160, -0.052730556951,
+          0.002443930582, -0.999811260845,  0.019273554196, -0.015855852433,
+          0.0,         0.0,         0.0,         1.0]
+
+# Compatibility key for ORB-SLAM3 forks.
+# Kept identical to IMU.T_b_c1.
+IMU.Tbc: !!opencv-matrix
+  rows: 4
+  cols: 4
+  dt: f
+  data: [-0.005764266094, -0.019287376442, -0.999797364643, -0.015705120367,
+          0.999980400028,  0.002332337460, -0.005810315160, -0.052730556951,
+          0.002443930582, -0.999811260845,  0.019273554196, -0.015855852433,
+          0.0,         0.0,         0.0,         1.0]
+
+# ================== Viewer ==================
+Viewer.KeyFrameSize: 0.02
+Viewer.KeyFrameLineWidth: 1.0
+Viewer.GraphLineWidth: 0.9
+Viewer.PointSize: 2.0
+Viewer.CameraSize: 0.08
+Viewer.CameraLineWidth: 3.0
+Viewer.ViewpointX: 0.0
+Viewer.ViewpointY: -1.7
+Viewer.ViewpointZ: 0.8
+Viewer.ViewpointF: -500.0
+Viewer.imageViewScale: 1.0

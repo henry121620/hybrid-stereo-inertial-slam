@@ -1,0 +1,44 @@
+# Build outputs
+build/
+lib/
+bin/
+*.o
+*.so
+*.a
+*.engine
+cmake-build-*/
+
+# Datasets and generated depth maps
+datasets/
+depth_igevpp_eth3d/
+*.bag
+*.npy
+*.npz
+
+# Model checkpoints, ONNX weights, and DBoW vocabularies
+pretrained_models/
+Vocabulary/
+onnxmodel/
+*.pth
+*.pt
+*.onnx
+*.yml.gz
+
+# Logs, trajectories, and evaluation runs
+runs/
+output/
+*.csv
+*.json
+!docker/*.json
+f_*.txt
+kf_*.txt
+
+# Editor / OS artifacts
+.vscode/
+.idea/
+__pycache__/
+*.pyc
+.DS_Store
+*.before_*
+*.FROZEN*
+

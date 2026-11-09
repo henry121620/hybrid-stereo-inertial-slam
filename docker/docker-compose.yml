@@ -1,0 +1,30 @@
+services:
+  roverslam-hybrid-depth:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    image: roverslam_hybrid_depth:noetic-cuda118
+    container_name: roverslam_hybrid_depth
+    stdin_open: true
+    tty: true
+    ipc: host
+    network_mode: host
+    environment:
+      DISPLAY: ${DISPLAY:-:0}
+      QT_X11_NO_MITSHM: "1"
+      NVIDIA_VISIBLE_DEVICES: all
+      NVIDIA_DRIVER_CAPABILITIES: compute,utility,graphics,display
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - ..:/workspace/hybrid_depth_repo:rw
+      - ${DATASETS_DIR:-../datasets}:/datasets:rw
+      - ${RUNS_DIR:-../runs}:/runs:rw
+    working_dir: /workspace
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
