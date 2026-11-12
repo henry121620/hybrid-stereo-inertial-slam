@@ -75,6 +75,17 @@ Immediately after native sparse stereo matching (`ComputeStereoMatches()`), [`Fr
 
 *On our archived 3-run `V203` verification logs (`1921` frames, `1805` matched poses), per-frame front-end support averaged `145.0` GQC-High fused pts (`27.3%`), `20.5` GQC-Mid fused pts (`3.5%`), `31.2` Conflict native-stereo fallbacks (`5.3%`), and `56.9` SCS-completed pts (`10.5%`), achieving `0.0203 m` best `Sim(3)` RMSE (`0.0207 m` strict `SE(3)`).*
 
+### Online Tracking Runtime & GPU Memory on EuRoC `V203`
+
+**Table II. Online Front-End Tracking Time and GPU Memory Comparison on `V203` (3-Run Mean)**
+
+| Method | Tracking Time Mean / Median (ms) | Peak GPU Memory (MB) | Tracking Losses | Online `Sim(3)` / `SE(3)` ATE (m) |
+| :--- | :---: | :---: | :---: | :---: |
+| **Rover-SLAM** (Original) | 40.63 / 38.80 | 2,378 | 65.0 | 0.0677 / 0.0700 |
+| **Ours** (`GQC + SAR + SCS`, Precomputed Depth) | **43.74 / 41.89** *(+3.11 ms)* | **2,257** *(-121 MB)* | **43.0** *(-33.8%)* | **0.0409 / 0.0412** *(-39.7%)* |
+
+*Measured on an NVIDIA GeForce RTX 4080 Laptop GPU in real-time non-blocking mode (`ROVER_OFFLINE_BLOCKING=0`, `ROVER_SLAM_USE_VIEWER=0`, `1921` frames). Runtime and GPU memory reflect the online SLAM pipeline (SuperPoint + LightGlue ONNX Runtime + CPU fusion front-end + back-end threads) consuming precomputed `.npy` depth maps; offline depth generation overhead is excluded.*
+
 ### Qualitative Comparisons on EuRoC `V203`
 
 **Full Trajectory & Local High-Error Segment (`V203`)**
